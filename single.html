@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>1단계 시뮬레이션 · 퀸컹스 실험실</title>
+  <meta name="description" content="표준 갈톤 보드(퀸컹스) 시뮬레이션: 공 개수, 핀 행 수, 오른쪽 확률, 시드를 바꾸며 이항분포와 정규 근사를 확인합니다." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="js/single-page.js"></script>
+</head>
+<body>
+  <header id="site-nav"></header>
+  <main id="main" class="sim-page">
+    <div class="container wide">
+      <div class="page-head">
+        <p class="eyebrow">1단계 · 표준 갈톤 보드</p>
+        <h1>1단계 시뮬레이션</h1>
+        <p class="desc">공은 핀을 만날 때마다 확률 \(p\)로 오른쪽, \(1-p\)로 왼쪽으로 갑니다. 도착 칸 번호는 오른쪽으로 간 횟수이며 이항분포 \(\mathrm{Bin}(n,p)\)를 따릅니다.</p>
+      </div>
+
+      <div class="sim-grid">
+        <!-- 보드 -->
+        <section class="panel board-panel" aria-labelledby="board-title">
+          <h2 id="board-title" class="sr-only">갈톤 보드</h2>
+          <div class="board-wrap">
+            <canvas id="board" role="img" aria-label="갈톤 보드 애니메이션. 아래 도수표에서 같은 내용을 텍스트로 볼 수 있습니다."></canvas>
+            <div id="tooltip" class="tooltip" hidden></div>
+          </div>
+          <div class="legend" id="board-legend"></div>
+          <div class="board-toolbar">
+            <div class="btn-row" role="group" aria-label="실행 조작">
+              <button class="btn btn-filled" id="btn-start" type="button">시작</button>
+              <button class="btn btn-outline" id="btn-pause" type="button" disabled>일시정지</button>
+              <button class="btn btn-outline" id="btn-one" type="button">한 개씩 떨어뜨리기</button>
+              <button class="btn btn-outline" id="btn-reset" type="button">초기화</button>
+            </div>
+            <button class="btn btn-ghost" id="btn-send" type="button" disabled>분석으로 보내기 →</button>
+          </div>
+          <p class="status-line" id="status" aria-live="polite">준비</p>
+          <p class="small muted" style="margin:0">막대(칸)를 누르면 관측 도수·기대 도수·경로 수를 볼 수 있습니다.</p>
+        </section>
+
+        <div class="sim-side">
+          <!-- 통계 -->
+          <section class="panel" aria-labelledby="stats-title">
+            <h2 class="panel-title" id="stats-title">실시간 통계</h2>
+            <div class="stats-row">
+              <div class="stat-box">
+                <div class="stat-label">도착한 공</div>
+                <div class="stat-num" id="st-arrived">0</div>
+                <div class="stat-sub" id="st-target">/ 1,000</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">평균 (관측)</div>
+                <div class="stat-num" id="st-mean">—</div>
+                <div class="stat-sub">예측 np = <span id="st-mean-th">6.000</span></div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">표준편차 (관측)</div>
+                <div class="stat-num" id="st-sd">—</div>
+                <div class="stat-sub">예측 √np(1−p) = <span id="st-sd-th">1.732</span></div>
+              </div>
+            </div>
+            <p class="small muted" style="margin:10px 0 0" id="seed-line">사용된 시드: —</p>
+          </section>
+
+          <!-- 설정 -->
+          <section class="panel">
+            <details class="collapsible" id="settings-box" open>
+              <summary>설정</summary>
+              <div class="field">
+                <div class="field-head"><label for="in-N">공 개수 N</label></div>
+                <div class="range-pair">
+                  <input type="range" id="rg-N" min="0" max="1000" step="1" aria-label="공 개수 슬라이더" />
+                  <input type="number" id="in-N" min="1" max="100000" step="1" value="1000" />
+                </div>
+                <p class="hint">1–100,000개. 애니메이션은 5,000개까지 권장합니다.</p>
+              </div>
+              <div class="field">
+                <div class="field-head"><label for="in-n">핀 행 수 n</label></div>
+                <div class="range-pair">
+                  <input type="range" id="rg-n" min="1" max="40" step="1" aria-label="핀 행 수 슬라이더" />
+                  <input type="number" id="in-n" min="1" max="40" step="1" value="12" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-head"><label for="in-p">오른쪽 확률 p</label></div>
+                <div class="range-pair">
+                  <input type="range" id="rg-p" min="0" max="1" step="0.01" aria-label="오른쪽 확률 슬라이더" />
+                  <input type="number" id="in-p" min="0" max="1" step="0.01" value="0.5" />
+                </div>
+                <p class="hint">n, p, N을 바꾸면 보드가 초기화됩니다.</p>
+              </div>
+              <div class="field">
+                <div class="field-head"><label for="in-speed">속도</label></div>
+                <div class="range-pair">
+                  <input type="range" id="rg-speed" min="1" max="10" step="1" aria-label="속도 슬라이더" />
+                  <input type="number" id="in-speed" min="1" max="10" step="1" value="5" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-head"><label for="in-size">공 크기 (px)</label></div>
+                <div class="range-pair">
+                  <input type="range" id="rg-size" min="2" max="10" step="1" aria-label="공 크기 슬라이더" />
+                  <input type="number" id="in-size" min="2" max="10" step="1" value="4" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-head"><label for="in-seed">난수 시드</label><button type="button" class="btn btn-ghost sm" id="btn-seed-auto">자동으로</button></div>
+                <input type="text" id="in-seed" inputmode="numeric" placeholder="비워 두면 자동" autocomplete="off" />
+                <p class="hint">같은 시드와 설정이면 언제나 같은 결과가 나옵니다.</p>
+              </div>
+              <div class="field">
+                <span class="label" id="mode-label">실행 방식</span>
+                <div class="seg" role="radiogroup" aria-labelledby="mode-label">
+                  <label><input type="radio" name="mode" value="anim" /><span>애니메이션</span></label>
+                  <label><input type="radio" name="mode" value="instant" /><span>즉시 계산</span></label>
+                </div>
+              </div>
+              <div class="field">
+                <span class="label">겹쳐 보기</span>
+                <label class="check"><input type="checkbox" id="ck-binom" /> 이항 확률 (속이 빈 점)</label>
+                <label class="check"><input type="checkbox" id="ck-normal" /> 정규 근사 곡선 (점선)</label>
+                <label class="check"><input type="checkbox" id="ck-trace" /> 경로 추적 (다음에 떨어지는 공 1개)</label>
+              </div>
+            </details>
+          </section>
+        </div>
+      </div>
+
+      <!-- 3단 설명 카드 -->
+      <div class="explain-cards">
+        <div class="feat-card">
+          <div class="num">01</div>
+          <h3>동전 던지기</h3>
+          <p>핀 하나는 동전 한 번입니다. 확률 \(p\)로 오른쪽, \(1-p\)로 왼쪽. 공의 도착 칸 \(K\)는 \(n\)번 중 오른쪽이 나온 횟수입니다.</p>
+        </div>
+        <div class="feat-card">
+          <div class="num">02</div>
+          <h3>종 모양</h3>
+          <p>칸 \(k\)에 이르는 경로는 \(\binom{n}{k}\)가지입니다. 가운데로 가는 길이 많아 가운데가 높고, 행이 많을수록 정규분포 \(N(np,\,np(1-p))\)에 가까워집니다.</p>
+        </div>
+        <div class="feat-card">
+          <div class="num">03</div>
+          <h3>편향</h3>
+          <p>\(p\neq 0.5\)이면 분포의 중심이 \(np\)로 옮겨 가고 폭은 \(\sqrt{np(1-p)}\)로 좁아지며 비대칭(왜도 \((1-2p)/\sigma\))이 생깁니다.</p>
+        </div>
+      </div>
+
+      <section class="panel" style="margin-top:20px">
+        <details class="collapsible" id="freq-box">
+          <summary>도수표 (화면 낭독기용 텍스트)</summary>
+          <div class="table-wrap scroll-y">
+            <table class="data" id="freq-table" aria-describedby="freq-caption">
+              <caption id="freq-caption" class="sr-only">칸별 관측 도수, 기대 도수, 경로 수</caption>
+              <thead><tr><th scope="col">칸 k</th><th scope="col">관측 도수</th><th scope="col">기대 도수</th><th scope="col">이항 확률</th><th scope="col">경로 수 C(n,k)</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+    </div>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
+</html>

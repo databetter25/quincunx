@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2단계 시뮬레이션 · 퀸컹스 실험실</title>
+  <meta name="description" content="Galton의 2단 퀸컹스 시뮬레이션: 중간 칸막이, 정규분포의 혼합, 분산의 가법성, 평균으로의 회귀를 확인합니다." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="js/two-stage-page.js"></script>
+</head>
+<body>
+  <header id="site-nav"></header>
+  <main id="main" class="sim-page">
+    <div class="container wide">
+      <div class="page-head">
+        <p class="eyebrow">2단계 · Galton의 2단 퀸컹스</p>
+        <h1>2단계 시뮬레이션</h1>
+        <p class="desc">위 보드(\(n_1\)행)를 지난 공은 중간 칸에 모였다가, 칸막이가 열리면 아래 보드(\(n_2\)행)를 지나 최종 칸에 도착합니다. 중간 위치 \(X_1\)과 아래 보드 이동 \(X_2\)의 합이 최종 위치 \(Y = X_1 + X_2\)입니다.</p>
+      </div>
+
+      <div class="sim-grid">
+        <section class="panel board-panel" aria-labelledby="board-title">
+          <h2 id="board-title" class="sr-only">2단 퀸컹스 보드</h2>
+          <div class="board-wrap">
+            <canvas id="board" role="img" aria-label="2단 퀸컹스 애니메이션. 아래 표에서 같은 내용을 텍스트로 볼 수 있습니다."></canvas>
+            <div id="tooltip" class="tooltip" hidden></div>
+          </div>
+          <div class="legend" id="board-legend"></div>
+          <div class="board-toolbar">
+            <div class="btn-row" role="group" aria-label="실행 조작">
+              <button class="btn btn-filled" id="btn-start" type="button">시작</button>
+              <button class="btn btn-outline" id="btn-pause" type="button" disabled>일시정지</button>
+              <button class="btn btn-outline" id="btn-one" type="button">한 개씩 떨어뜨리기</button>
+              <button class="btn btn-outline" id="btn-reset" type="button">초기화</button>
+            </div>
+            <button class="btn btn-ghost" id="btn-send" type="button" disabled>분석으로 보내기 →</button>
+          </div>
+          <p class="status-line" id="status" aria-live="polite">준비</p>
+          <p class="status-line" id="gate-status" aria-live="polite"></p>
+          <p class="small muted" style="margin:0"><b>역추적</b>: 최종 칸 막대를 누르면 그 칸에 도착한 공들이 거쳐 온 중간 칸 분포가 칸막이 자리에 노란색으로 표시됩니다.</p>
+        </section>
+
+        <div class="sim-side">
+          <section class="panel" aria-labelledby="stats-title">
+            <h2 class="panel-title" id="stats-title">실시간 통계 <span class="badge badge-gray" id="seed-badge">시드 —</span></h2>
+            <div class="stats-row">
+              <div class="stat-box">
+                <div class="stat-label">최종 도착</div>
+                <div class="stat-num" id="st-arrived">0</div>
+                <div class="stat-sub" id="st-target">/ 2,000</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">최종 평균</div>
+                <div class="stat-num" id="st-mean">—</div>
+                <div class="stat-sub">예측 <span id="st-mean-th">—</span></div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">최종 표준편차</div>
+                <div class="stat-num" id="st-sd">—</div>
+                <div class="stat-sub">예측 <span id="st-sd-th">—</span></div>
+              </div>
+            </div>
+            <h3 class="panel-title" style="margin-top:16px">중간 칸 분포 (위 보드 결과 X₁)</h3>
+            <div class="mini-chart chart" id="mid-chart"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="var-title">
+            <h2 class="panel-title" id="var-title">분산 분해</h2>
+            <div class="table-wrap">
+              <table class="data" id="var-table">
+                <thead><tr><th scope="col">항목</th><th scope="col">관측</th><th scope="col">이론</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="small muted" style="margin:8px 0 0">\(\mathrm{Var}(Y)=\mathrm{Var}(X_1)+\mathrm{Var}(X_2)\). 두 보드가 독립이면 공분산 항은 0 근처입니다.</p>
+          </section>
+
+          <section class="panel" id="backtrack" aria-live="polite">
+            <h2 class="panel-title">역추적 · 평균으로의 회귀</h2>
+            <div id="bt-body"><p class="small muted" style="margin:0">최종 칸을 눌러 보세요.</p></div>
+          </section>
+
+          <section class="panel">
+            <details class="collapsible" id="settings-box" open>
+              <summary>설정</summary>
+              <div class="two-col" style="gap:0 14px">
+                <div class="field">
+                  <div class="field-head"><label for="in-n1">위 보드 행 수 n₁</label></div>
+                  <div class="range-pair">
+                    <input type="range" id="rg-n1" min="1" max="30" step="1" aria-label="위 보드 행 수 슬라이더" />
+                    <input type="number" id="in-n1" min="1" max="30" step="1" value="8" />
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-head"><label for="in-n2">아래 보드 행 수 n₂</label></div>
+                  <div class="range-pair">
+                    <input type="range" id="rg-n2" min="1" max="30" step="1" aria-label="아래 보드 행 수 슬라이더" />
+                    <input type="number" id="in-n2" min="1" max="30" step="1" value="8" />
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-head"><label for="in-p1">위 보드 확률 p₁</label></div>
+                  <div class="range-pair">
+                    <input type="range" id="rg-p1" min="0" max="1" step="0.01" aria-label="위 보드 오른쪽 확률 슬라이더" />
+                    <input type="number" id="in-p1" min="0" max="1" step="0.01" value="0.5" />
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-head"><label for="in-p2">아래 보드 확률 p₂</label></div>
+                  <div class="range-pair">
+                    <input type="range" id="rg-p2" min="0" max="1" step="0.01" aria-label="아래 보드 오른쪽 확률 슬라이더" />
+                    <input type="number" id="in-p2" min="0" max="1" step="0.01" value="0.5" />
+                  </div>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-head"><label for="in-N">공 개수 N</label></div>
+                <div class="range-pair">
+                  <input type="range" id="rg-N" min="0" max="1000" step="1" aria-label="공 개수 슬라이더" />
+                  <input type="number" id="in-N" min="1" max="50000" step="1" value="2000" />
+                </div>
+                <p class="hint">1–50,000개. 애니메이션은 5,000개까지 권장합니다.</p>
+              </div>
+              <div class="field">
+                <span class="label" id="gate-label">칸막이 방식</span>
+                <div class="seg" role="radiogroup" aria-labelledby="gate-label">
+                  <label><input type="radio" name="gate" value="pass" /><span>통과</span></label>
+                  <label><input type="radio" name="gate" value="collect" /><span>모두 모은 뒤 열기</span></label>
+                  <label><input type="radio" name="gate" value="one" /><span>한 칸씩 열기</span></label>
+                </div>
+                <p class="hint">Galton의 원래 시연은 중간 칸을 한 칸씩 여는 방식이었습니다.</p>
+              </div>
+              <div class="two-col" style="gap:0 14px">
+                <div class="field">
+                  <div class="field-head"><label for="in-speed">속도</label></div>
+                  <div class="range-pair">
+                    <input type="range" id="rg-speed" min="1" max="10" step="1" aria-label="속도 슬라이더" />
+                    <input type="number" id="in-speed" min="1" max="10" step="1" value="5" />
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-head"><label for="in-size">공 크기 (px)</label></div>
+                  <div class="range-pair">
+                    <input type="range" id="rg-size" min="2" max="10" step="1" aria-label="공 크기 슬라이더" />
+                    <input type="number" id="in-size" min="2" max="10" step="1" value="4" />
+                  </div>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-head"><label for="in-seed">난수 시드</label><button type="button" class="btn btn-ghost sm" id="btn-seed-auto">자동으로</button></div>
+                <input type="text" id="in-seed" inputmode="numeric" placeholder="비워 두면 자동" autocomplete="off" />
+              </div>
+              <div class="field">
+                <span class="label" id="mode-label">실행 방식</span>
+                <div class="seg" role="radiogroup" aria-labelledby="mode-label">
+                  <label><input type="radio" name="mode" value="anim" /><span>애니메이션</span></label>
+                  <label><input type="radio" name="mode" value="instant" /><span>즉시 계산</span></label>
+                </div>
+              </div>
+              <div class="field">
+                <span class="label">표시</span>
+                <label class="check"><input type="checkbox" id="ck-color" /> 중간 칸 색상 구분 (누적 막대)</label>
+                <label class="check"><input type="checkbox" id="ck-binom" /> 비교 기준선: 같은 총 행 수의 1단계 이항분포 (점)</label>
+                <label class="check"><input type="checkbox" id="ck-normal" /> 정규 근사 곡선 (점선)</label>
+                <label class="check"><input type="checkbox" id="ck-trace" /> 경로 추적 (다음에 떨어지는 공 1개)</label>
+              </div>
+            </details>
+          </section>
+        </div>
+      </div>
+
+      <div class="explain-cards">
+        <div class="feat-card">
+          <div class="num">01</div>
+          <h3>작은 종들</h3>
+          <p>중간 칸 하나에서 출발한 공들은 아래 보드에서 다시 작은 종 모양 \(X_1 + \mathrm{Bin}(n_2,p_2)\)을 만듭니다. 색을 켜면 칸마다 작은 종이 보입니다.</p>
+        </div>
+        <div class="feat-card">
+          <div class="num">02</div>
+          <h3>혼합의 정규성</h3>
+          <p>작은 종들을 모두 더하면 다시 큰 종이 됩니다. \(p_1=p_2=p\)이면 \(Y\sim\mathrm{Bin}(n_1+n_2,p)\)로, 칸막이 없는 1단계 보드와 분포가 같습니다.</p>
+        </div>
+        <div class="feat-card">
+          <div class="num">03</div>
+          <h3>평균으로의 회귀</h3>
+          <p>최종 칸 \(Y\)에서 중간 칸을 거꾸로 추정하면 기울기 \(\sigma_1^2/\sigma^2<1\)만큼만 따라가, 중앙 쪽으로 당겨집니다. Galton이 회귀를 발견한 원리입니다.</p>
+        </div>
+      </div>
+
+      <section class="panel" style="margin-top:20px">
+        <details class="collapsible">
+          <summary>도수표 (화면 낭독기용 텍스트)</summary>
+          <div class="two-col">
+            <div class="table-wrap scroll-y">
+              <table class="data" id="mid-table">
+                <caption class="sr-only">중간 칸 도수</caption>
+                <thead><tr><th scope="col">중간 칸 X₁</th><th scope="col">관측 도수</th><th scope="col">기대 도수</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="table-wrap scroll-y">
+              <table class="data" id="final-table">
+                <caption class="sr-only">최종 칸 도수</caption>
+                <thead><tr><th scope="col">최종 칸 Y</th><th scope="col">관측 도수</th><th scope="col">기대 도수</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+      </section>
+    </div>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>퀸컹스란? · 퀸컹스 실험실</title>
+  <meta name="description" content="퀸컹스(갈톤 보드)의 역사와 원리: 이름의 유래, Galton의 장치, 파스칼 삼각형, 중심극한정리, 편향된 보드, 2단계 퀸컹스와 평균으로의 회귀." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="js/about-page.js"></script>
+</head>
+<body>
+  <header id="site-nav"></header>
+  <main id="main">
+    <section class="section tight">
+      <div class="container narrow">
+        <p class="eyebrow">퀸컹스란?</p>
+        <h1 style="font-size:clamp(2rem,5vw,3.2rem);letter-spacing:-1.5px">핀 몇 줄로 보는<br /><span class="grad-text">확률과 통계의 역사</span></h1>
+        <p class="desc">퀸컹스(quincunx)는 비스듬히 엇갈린 핀 사이로 공을 떨어뜨려 분포를 만드는 장치로, 흔히 갈톤 보드(Galton board)라고 부릅니다. 이 페이지는 이름의 유래부터 평균으로의 회귀까지 여덟 개의 절로 설명합니다.</p>
+        <nav class="toc" aria-label="이 페이지의 절">
+          <a class="chip" href="#name">1. 이름의 유래</a>
+          <a class="chip" href="#galton">2. Galton의 장치</a>
+          <a class="chip" href="#coin">3. 여러 번의 동전</a>
+          <a class="chip" href="#pascal">4. 파스칼 삼각형</a>
+          <a class="chip" href="#bell">5. 종 모양의 이유</a>
+          <a class="chip" href="#bias">6. 편향된 보드</a>
+          <a class="chip" href="#two">7. 2단계 퀸컹스</a>
+          <a class="chip" href="#modern">8. 현대적 의미</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section alt" id="name">
+      <div class="container narrow prose">
+        <p class="eyebrow">01 — 이름의 유래</p>
+        <h2>주사위의 <span class="grad-text">다섯 눈</span></h2>
+        <p>라틴어 quincunx는 원래 고대 로마의 동전 단위(12분의 5)였고, 그 동전에 새긴 다섯 점 무늬에서 <b>네 귀퉁이와 가운데에 하나</b>를 놓는 배치, 곧 주사위 5의 눈 모양을 뜻하게 되었습니다. 과수원에서 나무를 엇갈려 심는 방식도 같은 이름으로 불렸습니다.</p>
+        <p>갈톤 보드의 핀은 한 줄씩 반 칸 어긋나게 박혀 있어, 어느 부분을 잘라 보아도 이 다섯 점 무늬가 반복됩니다. 그래서 공은 핀에 부딪힐 때마다 바로 아래 줄의 두 핀 중 하나로만 갈 수 있습니다.</p>
+        <div class="figure">
+          <div id="fig-name" class="chart"></div>
+          <p class="figure-caption">왼쪽: 주사위 5의 눈. 오른쪽: 보드의 핀 배열. 핀에 마우스를 올리거나 눌러 보면 그 핀을 가운데로 하는 다섯 점 무늬가 강조됩니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="galton">
+      <div class="container narrow prose">
+        <p class="eyebrow">02 — Galton과 1873년 장치</p>
+        <h2>유전과 변이를 <span class="grad-text">눈으로 보이려고</span></h2>
+        <p>프랜시스 골턴(Francis Galton, 1822–1911)은 사촌 찰스 다윈의 『종의 기원』에 자극받아 유전과 변이를 수량으로 연구했습니다. 그는 키 같은 형질이 왜 세대가 지나도 비슷한 종 모양 분포를 유지하는지 설명하고 싶었고, 작은 우연이 많이 더해지면 정규분포가 된다는 생각을 보여 주려고 1873년 무렵 퀸컹스를 만들었습니다.</p>
+        <p>이 장치와 2단 변형은 1889년 저서 『Natural Inheritance』에 정리되었고, 여기서 회귀(regression)와 상관(correlation) 개념이 체계적으로 소개되었습니다.</p>
+      </div>
+      <div class="container">
+        <div class="timeline">
+          <div class="feat-card reveal"><div class="year grad-text">1859</div><p>다윈 『종의 기원』 출간. 골턴이 변이와 유전 연구로 방향을 돌리는 계기가 됩니다.</p></div>
+          <div class="feat-card reveal"><div class="year grad-text">1873</div><p>퀸컹스 제작. 공(산탄)이 핀 사이를 지나 칸에 쌓이며 종 모양을 만드는 장치입니다.</p></div>
+          <div class="feat-card reveal"><div class="year grad-text">1877</div><p>왕립연구소 강연 「Typical Laws of Heredity」. 같은 무렵 사촌 조지 다윈에게 보낸 편지에 중간 칸을 둔 2단 장치를 스케치합니다.</p></div>
+          <div class="feat-card reveal"><div class="year grad-text">1886</div><p>부모와 자녀의 키 자료에서 자녀가 부모보다 평균 쪽으로 가까워지는 현상, "평균으로의 회귀"를 발표합니다.</p></div>
+          <div class="feat-card reveal"><div class="year grad-text">1889</div><p>『Natural Inheritance』 출간. 퀸컹스, 회귀, 상관의 생각을 한 권에 정리합니다.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="coin">
+      <div class="container narrow prose">
+        <p class="eyebrow">03 — 한 개의 공, 여러 번의 동전</p>
+        <h2>도착 칸 = <span class="grad-text">오른쪽으로 간 횟수</span></h2>
+        <p>공이 핀을 만날 때마다 오른쪽이면 1, 왼쪽이면 0을 적는다고 합시다. \(n\)줄을 모두 지나면 적힌 숫자의 합이 곧 도착 칸 번호 \(K\)입니다. 행마다의 선택은 서로 독립인 베르누이 시행 \(B_i\sim\mathrm{Bernoulli}(p)\)이므로</p>
+        $$K=\sum_{i=1}^{n}B_i\sim\mathrm{Bin}(n,p),\qquad P(K=k)=\binom{n}{k}p^k(1-p)^{n-k}.$$
+        <div class="figure">
+          <div id="fig-coin" class="chart"></div>
+          <p class="coin-log" id="coin-log" aria-live="polite">버튼을 눌러 공을 한 행씩 진행시켜 보세요.</p>
+          <div class="figure-controls">
+            <button class="btn btn-filled sm" id="coin-step" type="button">한 행 진행</button>
+            <button class="btn btn-outline sm" id="coin-new" type="button">새 공</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pascal">
+      <div class="container narrow prose">
+        <p class="eyebrow">04 — 경로의 수와 파스칼 삼각형</p>
+        <h2>가운데로 가는 길이 <span class="grad-text">더 많다</span></h2>
+        <p>칸 \(k\)에 도착하려면 \(n\)번 중 정확히 \(k\)번 오른쪽으로 가야 하고, 그 순서를 고르는 방법은 \(\binom{n}{k}\)가지입니다. 각 핀에 "그 핀에 이르는 경로 수"를 적으면 위 두 수를 더해 아래 수를 만드는 파스칼 삼각형이 됩니다. \(p=0.5\)이면 모든 경로의 확률이 \(2^{-n}\)으로 같으므로, 칸의 확률은 경로 수에 비례합니다.</p>
+        <div class="figure">
+          <div id="fig-pascal" class="chart"></div>
+          <div class="figure-controls">
+            <label class="check"><input type="checkbox" id="pascal-toggle" checked /> 핀에 경로 수 표시</label>
+            <div class="range-pair" style="max-width:280px">
+              <input type="range" id="rg-pascal" min="2" max="10" step="1" value="7" aria-label="행 수" />
+              <input type="number" id="in-pascal" min="2" max="10" step="1" value="7" aria-label="행 수 입력" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="bell">
+      <div class="container narrow prose">
+        <p class="eyebrow">05 — 종 모양이 나타나는 이유</p>
+        <h2>이항분포에서 <span class="grad-text">정규분포로</span></h2>
+        <p>도착 칸은 독립인 작은 우연 \(n\)개의 합입니다. 중심극한정리(central limit theorem)에 따라 \(n\)이 커지면 표준화한 값의 분포가 표준정규분포에 가까워집니다.</p>
+        $$E[K]=np,\qquad \mathrm{Var}(K)=np(1-p),\qquad \frac{K-np}{\sqrt{np(1-p)}}\xrightarrow{d}N(0,1).$$
+        <div class="figure">
+          <div id="fig-bell" class="chart"></div>
+          <div class="figure-controls">
+            <span class="small">행 수 n</span>
+            <div class="range-pair">
+              <input type="range" id="rg-bell" min="1" max="40" step="1" value="4" aria-label="행 수" />
+              <input type="number" id="in-bell" min="1" max="40" step="1" value="4" aria-label="행 수 입력" />
+            </div>
+          </div>
+          <p class="figure-caption" id="bell-caption"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="bias">
+      <div class="container narrow prose">
+        <p class="eyebrow">06 — 편향된 보드</p>
+        <h2>기울어진 보드는 <span class="grad-text">중심을 옮긴다</span></h2>
+        <p>보드를 기울여 오른쪽 확률을 \(p\neq0.5\)로 만들면 평균 \(np\)가 옮겨 가고, 분산 \(np(1-p)\)는 \(p=0.5\)일 때 가장 크며 한쪽으로 치우칠수록 작아집니다. 분포는 비대칭이 되어 왜도가 \((1-2p)/\sqrt{np(1-p)}\)가 됩니다.</p>
+        <div class="figure">
+          <div id="fig-bias" class="chart"></div>
+          <div class="figure-controls">
+            <span class="small">오른쪽 확률 p</span>
+            <div class="range-pair">
+              <input type="range" id="rg-bias" min="0" max="1" step="0.01" value="0.7" aria-label="오른쪽 확률" />
+              <input type="number" id="in-bias" min="0" max="1" step="0.01" value="0.7" aria-label="오른쪽 확률 입력" />
+            </div>
+          </div>
+          <p class="figure-caption" id="bias-caption"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="two">
+      <div class="container narrow prose">
+        <p class="eyebrow">07 — 2단계 퀸컹스</p>
+        <h2>혼합, 가법성, <span class="grad-text">그리고 회귀</span></h2>
+        <p>Galton은 보드 중간에 칸막이를 달았습니다. 위 보드를 지난 공은 중간 칸에 모이고, 칸막이를 열면 각 칸의 공이 아래 보드를 지나 다시 퍼집니다. 중간 위치를 \(X_1\sim\mathrm{Bin}(n_1,p_1)\), 아래 보드 이동을 \(X_2\sim\mathrm{Bin}(n_2,p_2)\)라 하면 최종 위치는 \(Y=X_1+X_2\)입니다.</p>
+        <ul>
+          <li><b>혼합의 정규성</b>: 중간 칸 하나에서 출발한 공들은 작은 종을 만들고, 작은 종들의 합은 다시 큰 종입니다. \(p_1=p_2=p\)이면 \(Y\sim\mathrm{Bin}(n_1+n_2,p)\).</li>
+          <li><b>분산의 가법성</b>: \(X_1\)과 \(X_2\)가 독립이므로 \(\mathrm{Var}(Y)=\mathrm{Var}(X_1)+\mathrm{Var}(X_2)\).</li>
+          <li><b>평균으로의 회귀</b>: 중간 위치로 최종 위치를 예측하면 \(E[Y\mid X_1]=X_1+n_2p_2\)(기울기 1)이지만, 거꾸로 최종 위치로 중간 위치를 예측하면 기울기가 \(\sigma_1^2/(\sigma_1^2+\sigma_2^2)<1\)이라 중앙 쪽으로 당겨집니다.</li>
+        </ul>
+        $$E[X_1\mid Y]\approx E[X_1]+\frac{\sigma_1^2}{\sigma_1^2+\sigma_2^2}\bigl(Y-E[Y]\bigr),\qquad \rho(X_1,Y)=\frac{\sigma_1}{\sqrt{\sigma_1^2+\sigma_2^2}}.$$
+        <div class="figure">
+          <div class="board-wrap"><canvas id="fig-two" role="img" aria-label="칸막이를 열고 닫을 수 있는 2단 퀸컹스 애니메이션"></canvas></div>
+          <div class="figure-controls">
+            <button class="btn btn-filled sm" id="two-drop" type="button">공 400개 떨어뜨리기</button>
+            <button class="btn btn-outline sm" id="two-gate" type="button" aria-pressed="false">칸막이 열기</button>
+            <button class="btn btn-outline sm" id="two-reset" type="button">다시</button>
+          </div>
+          <p class="figure-caption" id="two-caption">칸막이가 닫혀 있으면 공이 중간 칸에 쌓입니다. 다 모인 뒤 칸막이를 열어 보세요. 색은 중간 칸을 나타냅니다.</p>
+        </div>
+        <h3 style="margin-top:36px">1단계와 2단계 비교</h3>
+        <div class="table-wrap">
+          <table class="data text-table compare-table">
+            <thead><tr><th scope="col">구분</th><th scope="col">1단계 (표준형)</th><th scope="col">2단계 (Galton의 2단 퀸컹스)</th></tr></thead>
+            <tbody>
+              <tr><td>구조</td><td>핀 \(n\)행, 아래에 칸</td><td>위 보드 \(n_1\)행 → 중간 칸막이 → 아래 보드 \(n_2\)행</td></tr>
+              <tr><td>도착 분포</td><td>\(K\sim\mathrm{Bin}(n,p)\)</td><td>\(Y=X_1+X_2\), \(p_1=p_2\)이면 \(\mathrm{Bin}(n_1+n_2,p)\)</td></tr>
+              <tr><td>보여 주는 것</td><td>이항분포, 중심극한정리, 편향</td><td>정규분포의 혼합, 분산의 가법성, 상관·회귀</td></tr>
+              <tr><td>핵심 식</td><td>\(\mathrm{Var}(K)=np(1-p)\)</td><td>\(\mathrm{Var}(Y)=\sigma_1^2+\sigma_2^2\), \(\rho=\sigma_1/\sigma\)</td></tr>
+              <tr><td>체험하기</td><td><a href="single.html">1단계 시뮬레이션 →</a></td><td><a href="two-stage.html">2단계 시뮬레이션 →</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="modern">
+      <div class="container narrow prose">
+        <p class="eyebrow">08 — 현대적 의미</p>
+        <h2>회귀와 상관의 <span class="grad-text">탄생</span></h2>
+        <p>2단 퀸컹스는 "결과는 원인을 그대로 따르지만, 결과로부터 원인을 추정하면 평균 쪽으로 당겨진다"는 비대칭을 보여 줍니다. 골턴은 이것으로 키가 큰 부모의 자녀가 평균적으로 부모보다 덜 크다는 관찰을 설명했고, 이 생각은 칼 피어슨(Karl Pearson)의 상관계수와 오늘날의 회귀분석으로 이어졌습니다.</p>
+        <p>회귀 기울기 \(\sigma_1^2/\sigma^2\)는 전체 변동 중 "물려받은" 부분의 비율로 읽을 수 있어, 유전학의 유전율(heritability) 논의와도 맞닿아 있습니다. 한편 평균으로의 회귀는 운동선수의 "2년 차 징크스"나 치료 효과의 과대평가처럼, 극단값을 골라 다시 재면 평균 쪽으로 돌아오는 흔한 착시를 설명하는 도구이기도 합니다.</p>
+        <p>다만 골턴은 이 통계 방법을 우생학(eugenics)을 옹호하는 데에도 썼습니다. 방법의 가치와 그 방법이 쓰인 역사적 맥락을 구분해 이해할 필요가 있습니다.</p>
+        <p style="margin-top:28px"><a class="btn btn-filled" href="single.html">1단계 시뮬레이션으로</a> <a class="btn btn-outline" href="help.html#refs">참고문헌 보기</a></p>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>결과 분석 · 퀸컹스 실험실</title>
+  <meta name="description" content="저장한 퀸컹스 실행 결과를 기술통계, 카이제곱 적합도 검정, 수렴 그림, Q-Q 그림, 결합 분포와 회귀로 분석합니다." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="js/analysis-page.js"></script>
+</head>
+<body>
+  <header id="site-nav"></header>
+  <main id="main" class="sim-page">
+    <div class="container wide">
+      <div class="page-head">
+        <p class="eyebrow">결과 분석</p>
+        <h1>결과 분석</h1>
+        <p class="desc">시뮬레이션에서 "분석으로 보내기"를 누른 실행 결과가 이 브라우저에 저장됩니다. 실행을 골라 적합도·수렴·회귀를 검토하고, 그림은 PNG로, 표는 CSV로 내려받을 수 있습니다.</p>
+      </div>
+
+      <div class="tab-nav" role="tablist" aria-label="분석 유형" style="margin-bottom:16px">
+        <button class="tab-btn" role="tab" id="tab-single" aria-selected="true" aria-controls="analysis-body" type="button">1단계 분석</button>
+        <button class="tab-btn" role="tab" id="tab-two" aria-selected="false" aria-controls="analysis-body" type="button">2단계 분석</button>
+      </div>
+
+      <div class="analysis-layout">
+        <aside class="panel" aria-labelledby="runs-title">
+          <h2 class="panel-title" id="runs-title">실행 목록 <span class="badge badge-gray" id="run-count">0</span></h2>
+          <div class="btn-row" style="margin-bottom:12px">
+            <label class="btn btn-outline sm" for="import-file" tabindex="0" id="import-label">JSON 가져오기</label>
+            <input type="file" id="import-file" accept=".json,application/json" class="sr-only" />
+            <button class="btn btn-outline sm" id="btn-export-sel" type="button">선택 JSON 내보내기</button>
+            <button class="btn btn-outline sm" id="btn-export-all" type="button">전체 JSON</button>
+          </div>
+          <p class="small muted" style="margin:0 0 8px">행을 누르면 분석 대상이 되고, 체크한 실행은 내보내기와 여러 실행 비교에 쓰입니다.</p>
+          <ul class="run-list" id="run-list" aria-label="저장된 실행"></ul>
+        </aside>
+
+        <section id="analysis-body" role="tabpanel" aria-live="polite">
+          <div class="panel empty-state">불러오는 중…</div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>도움말 · 퀸컹스 실험실</title>
+  <meta name="description" content="퀸컹스 실험실 사용법, 용어 풀이, 자주 묻는 질문, 참고문헌." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script type="module">import { initPage } from './js/common.js'; initPage();</script>
+</head>
+<body>
+  <header id="site-nav"></header>
+  <main id="main">
+    <section class="section tight">
+      <div class="container narrow prose">
+        <p class="eyebrow">도움말</p>
+        <h1 style="font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-1px">도움말</h1>
+        <p class="desc">사용법, 용어 풀이, 자주 묻는 질문, 참고문헌을 모았습니다.</p>
+        <nav class="toc" aria-label="도움말 목차">
+          <a class="chip" href="#howto">사용법</a>
+          <a class="chip" href="#keys">키보드 조작</a>
+          <a class="chip" href="#data">데이터 저장</a>
+          <a class="chip" href="#terms">용어 풀이</a>
+          <a class="chip" href="#faq">자주 묻는 질문</a>
+          <a class="chip" href="#refs">참고문헌</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section alt" id="howto">
+      <div class="container narrow prose">
+        <p class="eyebrow">사용법</p>
+        <h2>시뮬레이션에서 분석까지</h2>
+        <h3>1단계 시뮬레이션</h3>
+        <ol>
+          <li><b>설정</b>에서 공 개수 N, 핀 행 수 n, 오른쪽 확률 p를 정합니다. 슬라이더 옆 숫자 칸에 직접 입력해도 됩니다. n, p, N을 바꾸면 보드가 초기화됩니다.</li>
+          <li><b>실행 방식</b>을 고릅니다. 애니메이션은 공이 떨어지는 모습을 보여 주고(5,000개까지 권장), 즉시 계산은 결과 히스토그램만 바로 만듭니다(100,000개까지).</li>
+          <li><b>시작</b>, <b>일시정지</b>, <b>한 개씩 떨어뜨리기</b>, <b>초기화</b> 버튼으로 조작합니다. 실시간 통계 패널에서 관측 평균·표준편차를 예측값 \(np\), \(\sqrt{np(1-p)}\)와 비교하세요.</li>
+          <li>겹쳐 보기에서 이항 확률(속이 빈 점)과 정규 근사 곡선(점선)을 켜고 끌 수 있습니다. 칸을 누르면 관측 도수, 기대 도수, 경로 수가 나옵니다.</li>
+          <li><b>경로 추적</b>을 켜면 다음에 떨어지는 공 하나의 좌/우 경로가 노란 선으로 남습니다.</li>
+          <li>실행이 끝나면 <b>분석으로 보내기</b>를 눌러 결과를 저장하고 분석 페이지로 이동합니다.</li>
+        </ol>
+        <h3>2단계 시뮬레이션</h3>
+        <ol>
+          <li>위 보드 행 수 \(n_1\), 아래 보드 행 수 \(n_2\), 각 보드의 오른쪽 확률 \(p_1, p_2\)를 정합니다.</li>
+          <li><b>칸막이 방식</b>: <i>통과</i>는 칸막이 없이 곧바로 아래 보드로, <i>모두 모은 뒤 열기</i>는 모든 공이 중간 칸에 모인 뒤 한꺼번에, <i>한 칸씩 열기</i>는 Galton의 원래 시연처럼 왼쪽 칸부터 차례로 엽니다.</li>
+          <li><b>중간 칸 색상 구분</b>을 켜면 최종 히스토그램이 중간 칸 색으로 누적되어, 작은 종들이 모여 큰 종이 되는 모습을 볼 수 있습니다.</li>
+          <li><b>분산 분해</b> 패널에서 관측 \(\mathrm{Var}(X_1)+\mathrm{Var}(X_2)\)가 \(\mathrm{Var}(Y)\)와 거의 같은지 확인하세요.</li>
+          <li><b>역추적</b>: 최종 칸을 누르면 그 칸에 도착한 공들이 거쳐 온 중간 칸 분포가 칸막이 자리에 노란색으로 표시되고, 조건부 평균(검은 실선)이 단순 역산값(빨간 점선)보다 가운데 쪽에 있음을 보여 줍니다.</li>
+        </ol>
+        <h3>결과 분석</h3>
+        <ol>
+          <li>위쪽 탭에서 1단계/2단계를 고르고, 왼쪽 목록에서 실행을 누르면 분석이 나타납니다.</li>
+          <li>실행마다 <b>이름 바꾸기</b>, <b>삭제</b>, <b>JSON·CSV 내보내기</b>, <b>동일 설정 재실행</b>(같은 시드로 즉시 계산해 새 실행으로 저장)을 할 수 있습니다.</li>
+          <li>목록의 체크 상자로 여러 실행을 골라 한꺼번에 JSON으로 내보내거나, 1단계 실행들의 분포를 한 그림에 겹쳐 비교할 수 있습니다.</li>
+          <li>그림 옆 <b>PNG</b>, 표 옆 <b>CSV</b> 버튼으로 내려받습니다. 각 분석 아래에는 한 줄 해설이 자동으로 붙습니다.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="keys">
+      <div class="container narrow prose">
+        <p class="eyebrow">키보드 조작</p>
+        <h2>마우스 없이 쓰기</h2>
+        <ul>
+          <li><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd>: 버튼과 입력 칸 사이 이동. 페이지 맨 앞의 "본문 바로가기"로 메뉴를 건너뛸 수 있습니다.</li>
+          <li>슬라이더: <kbd>←</kbd> <kbd>→</kbd>로 한 단계씩, <kbd>Home</kbd> <kbd>End</kbd>로 끝까지. 숫자 칸에 값을 입력하고 <kbd>Enter</kbd>를 누르면 적용됩니다.</li>
+          <li>분석 탭: <kbd>←</kbd> <kbd>→</kbd>로 1단계/2단계 전환. 실행 목록에서 <kbd>Enter</kbd> 또는 <kbd>Space</kbd>로 선택.</li>
+          <li><kbd>Esc</kbd>: 모바일 메뉴 닫기, 칸 툴팁·역추적 표시 지우기.</li>
+          <li>보드 그림의 내용은 각 페이지 아래 <b>도수표</b>에 텍스트로도 제공됩니다(화면 낭독기 대응).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section alt" id="data">
+      <div class="container narrow prose">
+        <p class="eyebrow">데이터 저장</p>
+        <h2>결과는 이 브라우저에만</h2>
+        <p>이 사이트에는 서버가 없습니다. 실행 결과는 브라우저의 IndexedDB에, 화면 설정은 localStorage에 저장되어 새로고침하거나 다른 페이지로 이동해도 남아 있습니다. 다른 기기나 브라우저로 옮기려면 분석 페이지에서 JSON으로 내보낸 뒤 가져오기를 하세요. 브라우저의 사이트 데이터를 지우면 저장된 결과도 지워집니다.</p>
+        <p>실행 기록에는 설정값, 시드, 난수 생성기 이름(xoshiro128**), 사이트 버전, 칸별 도수, 공별 도착 위치가 들어 있습니다. 같은 시드와 설정으로 다시 실행하면 도수 배열이 완전히 같게 나옵니다. 애니메이션과 즉시 계산은 난수를 같은 순서로 쓰므로, 끝까지 실행했다면 두 방식의 결과도 같습니다.</p>
+      </div>
+    </section>
+
+    <section class="section" id="terms">
+      <div class="container narrow prose">
+        <p class="eyebrow">용어 풀이</p>
+        <h2>용어 풀이</h2>
+        <div class="table-wrap">
+          <table class="data text-table">
+            <thead><tr><th scope="col" style="width:30%">용어</th><th scope="col">뜻</th></tr></thead>
+            <tbody>
+              <tr><td>퀸컹스 (quincunx)</td><td>주사위 5 눈처럼 엇갈린 핀 배열. 여기서는 갈톤 보드(Galton board)를 가리킵니다.</td></tr>
+              <tr><td>베르누이 시행 (Bernoulli trial)</td><td>결과가 성공(1)/실패(0) 둘뿐인 시행. 핀 하나에서 오른쪽/왼쪽으로 가는 것.</td></tr>
+              <tr><td>이항분포 (binomial distribution)</td><td>독립인 베르누이 시행 \(n\)번에서 성공 횟수의 분포 \(\mathrm{Bin}(n,p)\).</td></tr>
+              <tr><td>이항계수 (binomial coefficient)</td><td>\(n\)개 중 \(k\)개를 고르는 방법의 수 \(\binom{n}{k}\). 칸 \(k\)에 이르는 경로 수.</td></tr>
+              <tr><td>정규분포 (normal distribution)</td><td>평균을 중심으로 좌우 대칭인 종 모양 분포 \(N(\mu,\sigma^2)\).</td></tr>
+              <tr><td>중심극한정리 (central limit theorem)</td><td>독립인 확률변수를 많이 더하면 그 합의 분포가 정규분포에 가까워진다는 정리.</td></tr>
+              <tr><td>연속성 보정 (continuity correction)</td><td>정수값 분포를 연속 분포로 근사할 때 칸 \(k\)를 구간 \([k-0.5,\,k+0.5]\)로 보는 것.</td></tr>
+              <tr><td>기댓값·평균 (expectation, mean)</td><td>분포의 중심. 이항분포에서 \(np\).</td></tr>
+              <tr><td>분산·표준편차 (variance, standard deviation)</td><td>퍼진 정도. 이항분포에서 분산 \(np(1-p)\), 표준편차는 그 제곱근.</td></tr>
+              <tr><td>왜도 (skewness)</td><td>분포의 비대칭 정도. 오른쪽 꼬리가 길면 양수.</td></tr>
+              <tr><td>첨도 (kurtosis)</td><td>꼬리의 두께. 이 사이트는 정규분포를 0으로 하는 초과첨도(excess kurtosis)를 씁니다.</td></tr>
+              <tr><td>카이제곱 적합도 검정 (chi-square goodness-of-fit test)</td><td>관측 도수가 이론 분포의 기대 도수와 맞는지 \(\sum (O-E)^2/E\)로 검정. 기대 도수 5 미만 칸은 병합합니다.</td></tr>
+              <tr><td>p값 (p-value)</td><td>귀무가설이 참일 때 지금만큼 또는 더 극단적인 결과가 나올 확률. 보통 0.05보다 작으면 귀무가설을 기각합니다.</td></tr>
+              <tr><td>잔차·표준화 잔차 (residual, standardized residual)</td><td>관측 − 기대, 그리고 그것을 표준편차로 나눈 값.</td></tr>
+              <tr><td>Q-Q 그림 (quantile-quantile plot)</td><td>관측 분위수와 이론 분위수를 짝지어 그린 그림. 직선에 가까우면 분포가 비슷합니다.</td></tr>
+              <tr><td>총변동거리 (total variation distance)</td><td>두 확률분포의 차이 \(\tfrac12\sum|p_k-q_k|\). 0이면 같은 분포.</td></tr>
+              <tr><td>혼합분포 (mixture distribution)</td><td>여러 분포를 비율대로 섞은 분포. 2단계 보드의 최종 분포는 중간 칸별 분포의 혼합입니다.</td></tr>
+              <tr><td>분산의 가법성 (additivity of variance)</td><td>독립인 두 확률변수의 합의 분산은 각 분산의 합.</td></tr>
+              <tr><td>공분산·상관계수 (covariance, correlation coefficient)</td><td>두 변수가 함께 변하는 정도. 상관계수 \(r\)은 −1에서 1 사이로 표준화한 값.</td></tr>
+              <tr><td>회귀 (regression)</td><td>한 변수로 다른 변수의 조건부 평균을 예측하는 직선(회귀선).</td></tr>
+              <tr><td>평균으로의 회귀 (regression toward the mean)</td><td>극단적인 결과로부터 원인을 예측하면 평균 쪽으로 당겨지는 현상. 회귀 기울기가 1보다 작기 때문.</td></tr>
+              <tr><td>시드 (seed)</td><td>의사난수 생성기의 시작값. 같은 시드면 같은 난수열이 나옵니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="faq">
+      <div class="container narrow prose">
+        <p class="eyebrow">자주 묻는 질문</p>
+        <h2>자주 묻는 질문</h2>
+        <h4>공이 실제로 핀에 부딪히는 물리 시뮬레이션인가요?</h4>
+        <p>아닙니다. 교육 목적에 맞게 행마다 확률 \(p\)로 오른쪽, \(1-p\)로 왼쪽을 고르는 확률 모델을 씁니다. 애니메이션은 미리 정해진 좌/우 경로를 부드럽게 그릴 뿐입니다. 실제 장치는 공끼리 부딪히고 튀어서 이 모델과 조금 다를 수 있습니다.</p>
+        <h4>카이제곱 검정에서 가끔 기각되는데 잘못된 건가요?</h4>
+        <p>유의수준 5%로 검정하면 모델이 옳아도 약 20번에 1번은 우연히 기각됩니다. 여러 시드로 실행해 기각 비율이 약 5%인지 보세요.</p>
+        <h4>2단계에서 관측 Var(X₁)+Var(X₂)가 Var(Y)와 정확히 같지 않아요.</h4>
+        <p>표본에서는 \(X_1\)과 \(X_2\)의 공분산이 정확히 0이 아니기 때문입니다. 분산 분해 표의 \(2\,\mathrm{Cov}(X_1,X_2)\) 항을 더하면 정확히 맞습니다.</p>
+        <h4>휴대폰에서 애니메이션이 느려요.</h4>
+        <p>공 개수를 줄이거나 즉시 계산을 쓰세요. 운영체제에서 "동작 줄이기"를 켜 두면 즉시 계산이 기본값이 됩니다.</p>
+        <h4>인터넷 없이 쓸 수 있나요?</h4>
+        <p>모든 계산은 브라우저 안에서 이루어집니다. 수식 글꼴(KaTeX)만 외부에서 불러오므로, 오프라인에서는 수식이 원문 형태로 보일 수 있습니다. 파일을 내려받아 쓸 때는 ES 모듈 제약 때문에 간단한 로컬 서버(예: <code>python -m http.server</code>)로 여세요.</p>
+      </div>
+    </section>
+
+    <section class="section" id="refs">
+      <div class="container narrow prose">
+        <p class="eyebrow">참고문헌</p>
+        <h2>참고문헌</h2>
+        <ul>
+          <li>Galton, F. (1889). <i>Natural Inheritance</i>. London: Macmillan.</li>
+          <li>Galton, F. (1877). Typical laws of heredity. <i>Nature</i>, 15, 492–495, 512–514, 532–533.</li>
+          <li>Galton, F. (1886). Regression towards mediocrity in hereditary stature. <i>Journal of the Anthropological Institute</i>, 15, 246–263.</li>
+          <li>Stigler, S. M. (1986). <i>The History of Statistics: The Measurement of Uncertainty before 1900</i>. Cambridge, MA: Harvard University Press, 8장.</li>
+          <li>Stigler, S. M. (2010). Darwin, Galton and the statistical enlightenment. <i>Journal of the Royal Statistical Society: Series A</i>, 173(3), 469–482.</li>
+          <li>Blackman, D., &amp; Vigna, S. (2021). Scrambled linear pseudorandom number generators. <i>ACM Transactions on Mathematical Software</i>, 47(4). (xoshiro128**)</li>
+          <li>Okabe, M., &amp; Ito, K. (2008). <i>Color Universal Design (CUD): How to make figures and presentations that are friendly to colorblind people</i>.</li>
+          <li><a href="https://appland.live/lab/galton-board" rel="noopener">AppLand.live Galton Board 시뮬레이터</a> (2026-09-26 확인)</li>
+        </ul>
+        <p class="small muted">용어 표기는 한국통계학회 통계용어를 따르고, 처음 나올 때 영문을 함께 적었습니다.</p>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+</body>
+</html>
